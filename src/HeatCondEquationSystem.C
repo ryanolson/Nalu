@@ -38,6 +38,7 @@
 #include <LinearSolvers.h>
 #include <LinearSolver.h>
 #include <LinearSystem.h>
+#include <master_element/MasterElement.h>
 #include <NaluEnv.h>
 #include <Realm.h>
 #include <Realms.h>
@@ -230,7 +231,8 @@ HeatCondEquationSystem::register_element_fields(
 
   stk::mesh::MetaData &meta_data = realm_.meta_data();
 
-  const int numScvIp = theTopo.num_nodes();
+  MasterElement *meSCV = realm_.get_volume_master_element(theTopo);
+  const int numScvIp = meSCV->numIntPoints_;
   scVolume_ = &(meta_data.declare_field<GenericFieldType>(stk::topology::ELEMENT_RANK, "sc_volume"));
   stk::mesh::put_field(*scVolume_, *part, numScvIp );
 
@@ -325,7 +327,7 @@ HeatCondEquationSystem::register_interior_algorithm(
         std::string sourceName = mapNameVec[k];
         if (sourceName == "steady_2d_thermal" ) {
           SteadyThermalContactSrcNodeSuppAlg *theSrc
-	    = new SteadyThermalContactSrcNodeSuppAlg(realm_);
+            = new SteadyThermalContactSrcNodeSuppAlg(realm_);
           theAlg->supplementalAlg_.push_back(theSrc);
         }
         else {

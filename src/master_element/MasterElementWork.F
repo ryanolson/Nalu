@@ -2044,6 +2044,256 @@ c
       return
       end
 
+      subroutine quad9_scs_det( nelem, npe, nint,
+     *    cordel, area_vec )
+c
+c***********************************************************************
+c***********************************************************************
+c
+c description:
+c     This  routine returns the area vectors for each of the 4
+c     subcontrol surfaces of the quad.
+c
+c formal parameters - input:
+c     nelem         int   number of elements in the workset
+c     npe           int   number of nodes per element
+c     nint          int   number of sub control surfaces
+c     cordel        real  element local coordinates
+c
+c formal parameters - output:
+c     area_vec      real  area vector: A = Ax i + Ay j
+c                                        = Area*(i + j)
+c
+c***********************************************************************
+c
+      implicit none
+c
+      dimension cordel(2,npe,nelem),
+     *          area_vec(2,nelem,nint)
+      double precision cordel, area_vec
+      integer nelem, npe, nint
+c
+      dimension coord_mid_face(2,4)
+      double precision coord_mid_face
+
+      integer k, kx, ky
+      double precision a1, a2, a3, x1, y1, x2, y2
+
+      double precision zero, one, half, one4th, oneThird, twoThird
+      parameter (zero = 0.0d0)
+      parameter (one = 1.0d0)
+      parameter (half = 0.5d0)
+      parameter (one4th = 0.25d0)
+      parameter (oneThird = 1.0d0/3.0d0)
+      parameter (twoThird = 2.0d0/3.0d0)
+c
+      kx = 1
+      ky = 2
+c
+      do k = 1, nelem
+c
+c Sum Element 1, nodes 1, 5, 9, 8
+c
+c calculate element mid-point coordinates
+         x1 = ( cordel(kx,1,k) + cordel(kx,5,k)
+     *        + cordel(kx,9,k) + cordel(kx,8,k) ) * one4th
+         y1 = (cordel(ky,1,k) + cordel(ky,5,k)
+     *        + cordel(ky,9,k) + cordel(ky,8,k) ) * one4th
+c calculate element mid-face coordinates
+         coord_mid_face(kx,1) = (cordel(kx,1,k)+cordel(kx,5,k) )*half
+         coord_mid_face(kx,2) = (cordel(kx,5,k)+cordel(kx,9,k) )*half
+         coord_mid_face(kx,3) = (cordel(kx,9,k)+cordel(kx,8,k) )*half
+         coord_mid_face(kx,4) = (cordel(kx,8,k)+cordel(kx,1,k) )*half
+         coord_mid_face(ky,1) = (cordel(ky,1,k)+cordel(ky,5,k) )*half
+         coord_mid_face(ky,2) = (cordel(ky,5,k)+cordel(ky,9,k) )*half
+         coord_mid_face(ky,3) = (cordel(ky,9,k)+cordel(ky,8,k) )*half
+         coord_mid_face(ky,4) = (cordel(ky,8,k)+cordel(ky,1,k) )*half
+c
+c Control surface 1, 17
+         x2 = coord_mid_face(kx,1)
+         y2 = coord_mid_face(ky,1)
+c
+         area_vec(kx, k, 1)  = -(y2 - y1)*half
+         area_vec(ky, k, 1)  =  (x2 - x1)*half
+         area_vec(kx, k, 17) = -(y2 - y1)*half
+         area_vec(ky, k, 17) =  (x2 - x1)*half
+c
+c Control surface 2
+         x2 = coord_mid_face(kx,2)
+         y2 = coord_mid_face(ky,2)
+c
+         area_vec(kx, k, 2)  = -(y2 - y1)
+         area_vec(ky, k, 2)  =  (x2 - x1)
+c
+c Control surface 3
+         x2 = coord_mid_face(kx,3)
+         y2 = coord_mid_face(ky,3)
+c
+         area_vec(kx, k, 3)  =   (y2 - y1)
+         area_vec(ky, k, 3)  =   -(x2 - x1)
+c
+c Control surface 4; 21
+         x2 = coord_mid_face(kx,4)
+         y2 = coord_mid_face(ky,4)
+c
+         area_vec(kx, k, 4)  =  (y2 - y1)*half
+         area_vec(ky, k, 4)  = -(x2 - x1)*half
+         area_vec(kx, k, 21) =  (y2 - y1)*half
+         area_vec(ky, k, 21) = -(x2 - x1)*half
+c
+c Element 2, nodes 5, 2, 6, 9
+c
+c calculate element mid-point coordinates
+         x1 = ( cordel(kx,5,k) + cordel(kx,2,k)
+     *        + cordel(kx,6,k) + cordel(kx,9,k) ) * one4th
+         y1 = ( cordel(ky,5,k) + cordel(ky,2,k)
+     *        + cordel(ky,6,k) + cordel(ky,9,k) ) * one4th
+c calculate element mid-face coordinates
+         coord_mid_face(kx,1) = ( cordel(kx,5,k)+cordel(kx,2,k) )*half
+         coord_mid_face(kx,2) = ( cordel(kx,2,k)+cordel(kx,6,k) )*half
+         coord_mid_face(kx,3) = ( cordel(kx,6,k)+cordel(kx,9,k) )*half
+         coord_mid_face(kx,4) = ( cordel(kx,9,k)+cordel(kx,5,k) )*half
+         coord_mid_face(ky,1) = ( cordel(ky,5,k)+cordel(ky,2,k) )*half
+         coord_mid_face(ky,2) = ( cordel(ky,2,k)+cordel(ky,6,k) )*half
+         coord_mid_face(ky,3) = ( cordel(ky,6,k)+cordel(ky,9,k) )*half
+         coord_mid_face(ky,4) = ( cordel(ky,9,k)+cordel(ky,5,k) )*half
+c
+c Control surface 5; 18
+         x2 = coord_mid_face(kx,1)
+         y2 = coord_mid_face(ky,1)
+c
+         area_vec(kx, k, 5) =   (y2 - y1)*half
+         area_vec(ky, k, 5) =  -(x2 - x1)*half
+         area_vec(kx, k, 18) =  (y2 - y1)*half
+         area_vec(ky, k, 18) = -(x2 - x1)*half
+c
+c Control surface 6; 22
+         x2 = coord_mid_face(kx,2)
+         y2 = coord_mid_face(ky,2)
+c
+         area_vec(kx, k, 6)  = -(y2 - y1)*half
+         area_vec(ky, k, 6)  =  (x2 - x1)*half
+         area_vec(kx, k, 22) = -(y2 - y1)*half
+         area_vec(ky, k, 22) =  (x2 - x1)*half
+c
+c Control surface 7
+         x2 = coord_mid_face(kx,3)
+         y2 = coord_mid_face(ky,3)
+c
+         area_vec(kx, k, 7) =  -(y2 - y1)
+         area_vec(ky, k, 7) =   (x2 - x1)
+c
+c Control surface 8;
+         x2 = coord_mid_face(kx,4)
+         y2 = coord_mid_face(ky,4)
+c
+         area_vec(kx, k, 8) =  (y2 - y1)
+         area_vec(ky, k, 8) = -(x2 - x1)
+c
+c
+c Element 3, nodes 9, 6, 3, 7
+c
+c calculate element mid-point coordinates
+         x1 = ( cordel(kx,9,k) + cordel(kx,6,k)
+     *        + cordel(kx,3,k) + cordel(kx,7,k) ) * one4th
+         y1 = ( cordel(ky,9,k) + cordel(ky,6,k)
+     *        + cordel(ky,3,k) + cordel(ky,7,k) ) * one4th
+c calculate element mid-face coordinates
+         coord_mid_face(kx,1) = ( cordel(kx,9,k)+cordel(kx,6,k) )*half
+         coord_mid_face(kx,2) = ( cordel(kx,6,k)+cordel(kx,3,k) )*half
+         coord_mid_face(kx,3) = ( cordel(kx,3,k)+cordel(kx,7,k) )*half
+         coord_mid_face(kx,4) = ( cordel(kx,7,k)+cordel(kx,9,k) )*half
+         coord_mid_face(ky,1) = ( cordel(ky,9,k)+cordel(ky,6,k) )*half
+         coord_mid_face(ky,2) = ( cordel(ky,6,k)+cordel(ky,3,k) )*half
+         coord_mid_face(ky,3) = ( cordel(ky,3,k)+cordel(ky,7,k) )*half
+         coord_mid_face(ky,4) = ( cordel(ky,7,k)+cordel(ky,9,k) )*half
+c
+c Control surface 9;
+         x2 = coord_mid_face(kx,1)
+         y2 = coord_mid_face(ky,1)
+c
+         area_vec(kx, k, 9) =    (y2 - y1)
+         area_vec(ky, k, 9) =    -(x2 - x1)
+c
+c Control surface 10; 23
+         x2 = coord_mid_face(kx,2)
+         y2 = coord_mid_face(ky,2)
+c
+         area_vec(kx, k, 10) =   (y2 - y1)*half
+         area_vec(ky, k, 10) =  -(x2 - x1)*half
+         area_vec(kx, k, 23) =   (y2 - y1)*half
+         area_vec(ky, k, 23) =  -(x2 - x1)*half
+c
+c Control surface 11; 19
+         x2 = coord_mid_face(kx,3)
+         y2 = coord_mid_face(ky,3)
+c
+         area_vec(kx, k, 11) =  -(y2 - y1)*half
+         area_vec(ky, k, 11) =   (x2 - x1)*half
+         area_vec(kx, k, 19) =  -(y2 - y1)*half
+         area_vec(ky, k, 19) =   (x2 - x1)*half
+c
+c Control surface 12
+         x2 = coord_mid_face(kx,4)
+         y2 = coord_mid_face(ky,4)
+c
+         area_vec(kx, k, 12) =  -(y2 - y1)
+         area_vec(ky, k, 12) =   (x2 - x1)
+c
+c
+c Element 4, nodes 8, 9, 7, 4
+c
+c calculate element mid-point coordinates
+         x1 = ( cordel(kx,8,k) + cordel(kx,9,k)
+     *        + cordel(kx,7,k) + cordel(kx,4,k) ) * one4th
+         y1 = ( cordel(ky,8,k) + cordel(ky,9,k)
+     *        + cordel(ky,7,k) + cordel(ky,4,k) ) * one4th
+c calculate element mid-face coordinates
+         coord_mid_face(kx,1) = ( cordel(kx,8,k)+cordel(kx,9,k) )*half
+         coord_mid_face(kx,2) = ( cordel(kx,9,k)+cordel(kx,7,k) )*half
+         coord_mid_face(kx,3) = ( cordel(kx,7,k)+cordel(kx,4,k) )*half
+         coord_mid_face(kx,4) = ( cordel(kx,4,k)+cordel(kx,8,k) )*half
+         coord_mid_face(ky,1) = ( cordel(ky,8,k)+cordel(ky,9,k) )*half
+         coord_mid_face(ky,2) = ( cordel(ky,9,k)+cordel(ky,7,k) )*half
+         coord_mid_face(ky,3) = ( cordel(ky,7,k)+cordel(ky,4,k) )*half
+         coord_mid_face(ky,4) = ( cordel(ky,4,k)+cordel(ky,8,k) )*half
+c
+c Control surface 13
+         x2 = coord_mid_face(kx,1)
+         y2 = coord_mid_face(ky,1)
+c
+         area_vec(kx, k, 13) = -(y2 - y1)
+         area_vec(ky, k, 13) =  (x2 - x1)
+c
+c Control surface 14
+         x2 = coord_mid_face(kx,2)
+         y2 = coord_mid_face(ky,2)
+c
+         area_vec(kx, k, 14) =  (y2 - y1)
+         area_vec(ky, k, 14) = -(x2 - x1)
+c
+c Control surface 15; 20
+         x2 = coord_mid_face(kx,3)
+         y2 = coord_mid_face(ky,3)
+c
+         area_vec(kx, k, 15) =  (y2 - y1)*half
+         area_vec(ky, k, 15) = -(x2 - x1)*half
+         area_vec(kx, k, 20) =  (y2 - y1)*half
+         area_vec(ky, k, 20) = -(x2 - x1)*half
+c
+c Control surface 16; 24
+         x2 = coord_mid_face(kx,4)
+         y2 = coord_mid_face(ky,4)
+c
+         area_vec(kx, k, 16) =  -(y2 - y1)*half
+         area_vec(ky, k, 16) =   (x2 - x1)*half
+         area_vec(kx, k, 24) =  -(y2 - y1)*half
+         area_vec(ky, k, 24) =   (x2 - x1)*half
+      end do
+c
+      return
+      end
+
 c
 c     Copyright 2002 Sandia Corporation, Albuquerque, NM.
 c
@@ -3526,12 +3776,182 @@ c
          s1 = par_coord(1,j)
          s2 = par_coord(2,j)
 c
-         Shape_fcn(1,j) = one4th + half*(-s1 - s2) + s1*s2
+         shape_fcn(1,j) = one4th + half*(-s1 - s2) + s1*s2
          shape_fcn(2,j) = one4th + half*( s1 - s2) - s1*s2
          shape_fcn(3,j) = one4th + half*( s1 + s2) + s1*s2
          shape_fcn(4,j) = one4th + half*(-s1 + s2) - s1*s2
 c
       end do
+c
+      return
+      end
+
+      subroutine quad92d_derivative( npts, par_coord, deriv )
+!       
+!***********************************************************************
+!***********************************************************************
+!
+! formal parameters - input:
+!     npts          int   number of points to evaluate (usually 
+!                         the number of Gauss Points)
+!     par_coord     real  parametric coordinates of the points to be
+!                         evaluated (typically, the gauss pts)
+!
+! formal parameters - output:
+!     deriv         real  shape function dirivatives evaluated at 
+!                         evaluation points.
+!
+!***********************************************************************
+!
+!
+      implicit none
+!
+      integer npts
+      double precision par_coord, deriv
+c
+      dimension par_coord(2,npts)
+      dimension deriv(2,9,npts)
+
+      integer j
+      double precision s, t, t2, s2
+      double precision one4th, half, one, two
+!
+      one4th = 1.d0/4.d0
+      half = 1.d0/2.d0
+      one = 1.d0
+      two = 2.d0
+
+      do j = 1,npts
+         s = par_coord(1,j)
+         t = par_coord(2,j)
+
+         t2 = t*t
+         s2 = s*s
+!
+! shape function derivative in the s direction -
+!
+        deriv(1,1,j) =  one4th * (two * s  * t2 - two*s*t-t2+t)
+        deriv(1,2,j) =  one4th * (two * s  * t2 - two*s*t+t2-t)
+        deriv(1,3,j) =  one4th * (two * s  * t2 + two*s*t+t2+t)
+        deriv(1,4,j) =  one4th * (two * s  * t2 + two*s*t-t2-t)
+        deriv(1,5,j) =   -half * (two * s  * t2 - two*s*t)
+        deriv(1,6,j) =   -half * (two * s  * t2 + t2 - two*s-one)
+        deriv(1,7,j) =   -half * (two * s  * t2 + two*s*t)
+        deriv(1,8,j) =   -half * (two * s  * t2 - t2 - two*s+one)
+        deriv(1,9,j) =            two * s  * t2      - two*s
+!
+! shape function derivative in the t direction -
+!
+        deriv(2,1,j) =  one4th * (two * s2 * t  - two*s*t-s2+s)
+        deriv(2,2,j) =  one4th * (two * s2 * t  + two*s*t-s2-s)
+        deriv(2,3,j) =  one4th * (two * s2 * t  + two*s*t+s2+s)
+        deriv(2,4,j) =  one4th * (two * s2 * t  - two*s*t+s2-s)
+        deriv(2,5,j) =   -half * (two * s2 * t  - s2 - two*t+one)
+        deriv(2,6,j) =   -half * (two * s2 * t  + two*s*t)
+        deriv(2,7,j) =   -half * (two * s2 * t  + s2 - two*t-one)
+        deriv(2,8,j) =   -half * (two * s2 * t  - two*s*t)
+        deriv(2,9,j) =            two * s2 * t       - two*t
+
+      end do
+!
+      return
+      end
+
+      subroutine edge32d_scs_det( nelem, npe, nint,
+     *    cordel, area )
+c
+c***********************************************************************
+c***********************************************************************
+c
+c description:
+c     This  routine returns the area vectors for each of the 4
+c     subcontrol surfaces of the edge.
+c
+c formal parameters - input:
+c     nelem         int   number of elements in the workset
+c     npe           int   number of nodes per element
+c     nint          int   number of sub control surfaces
+c     cordel        real  element local coordinates
+c
+c formal parameters - output:
+c     area          real  area vector: A = Ax i + Ay j + Az k
+c                                        = Area*(i + j + k)
+c
+c***********************************************************************
+c
+c
+      implicit none
+      integer nelem, npe, nint
+      double precision cordel, area
+c
+      integer k, i, idim
+      double precision p, e, c
+      double precision half, third
+      double precision dx13, dy13
+
+      dimension cordel(2, npe, nelem)
+      dimension area(2, nelem, nint)
+      dimension p(2,npe), c(2,2)
+c
+      half = 1.d0/2.d0
+c
+c----------- first executable line of edge32d_scs_det. ---------
+c
+c ... INITIALIZE FACE DEFINITION
+c
+      do k=1,nelem
+c
+        do i = 1, npe
+          do idim = 1, 2
+            p(idim, i) = cordel(idim, i, k)
+          end do
+        end do
+c
+        do idim = 1, 2
+           c(idim,1) = ( p(idim, 1) + p(idim, 3) ) * half
+           c(idim,2) = ( p(idim, 2) + p(idim, 3) ) * half
+        end do
+c
+c ... CALCULATE SUBCONTROL VOLUME FACE AREAS ...
+c     ... subcontrol volume ip 1, 2
+c
+        dx13 = c(1,1) - cordel(1,1,k)
+        dy13 = c(2,1) - cordel(2,1,k)
+c
+        area(1, k, 1) = dy13*half
+        area(2, k, 1) = -dx13*half
+        area(1, k, 2) = dy13*half
+        area(2, k, 2) = -dx13*half
+c
+c     ... subcontrol volume ip 3
+c
+        dx13 = cordel(1,3,k) - c(1,1)
+        dy13 = cordel(2,3,k) - c(2,1)
+c
+        area(1, k, 3) = dy13
+        area(2, k, 3) = -dx13
+c
+c     ... subcontrol volume ip 4
+c
+        dx13 = c(1,2) - cordel(1,3,k)
+        dy13 = c(2,2) - cordel(2,3,k)
+c
+        area(1, k, 4) = dy13
+        area(2, k, 4) = -dx13
+c
+c     ... subcontrol volume ip 5, 6
+c
+        dx13 = cordel(1,2,k) - c(1,2) 
+        dy13 = cordel(2,2,k) - c(2,2)
+c
+        area(1, k, 5) = dy13*half
+        area(2, k, 5) = -dx13*half
+        area(1, k, 6) = dy13*half
+        area(2, k, 6) = -dx13*half
+c
+      end do
+c
+c---------- last executable line of edge32d_scs_det ----------
 c
       return
       end

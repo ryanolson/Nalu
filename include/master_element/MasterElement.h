@@ -71,6 +71,10 @@ public:
     throw std::runtime_error("adjacentNodes not implementedunknown bc");
     return NULL;}
 
+  virtual const int * ipNodeMap() {
+      throw std::runtime_error("ipNodeMap not implemented");
+      return NULL;}
+
   virtual void shape_fcn(
     double *shpfc) {
     throw std::runtime_error("shape_fcn not implemented"); }
@@ -127,6 +131,7 @@ public:
   int nodesPerElement_;
   int numIntPoints_;
   std::vector<int> lrscv_;
+  std::vector<int> ipNodeMap_;
   std::vector<int> oppNode_;
   std::vector<int> oppFace_;
   std::vector<double> intgLoc_;
@@ -149,6 +154,8 @@ public:
 
   HexSCV();
   virtual ~HexSCV();
+
+  const int * ipNodeMap();
 
   void determinant(
     const int nelem,
@@ -249,6 +256,8 @@ public:
   TetSCV();
   virtual ~TetSCV();
 
+  const int * ipNodeMap();
+
   void determinant(
     const int nelem,
     const double *coords,
@@ -323,6 +332,8 @@ public:
   PyrSCV();
   virtual ~PyrSCV();
 
+  const int * ipNodeMap();
+
   void determinant(
     const int nelem,
     const double *coords,
@@ -388,6 +399,8 @@ class WedSCV : public MasterElement
 public:
   WedSCV();
   virtual ~WedSCV();
+
+  const int * ipNodeMap();
 
   void determinant(
     const int nelem,
@@ -465,6 +478,8 @@ class Quad2DSCV : public MasterElement
 public:
   Quad2DSCV();
   virtual ~Quad2DSCV();
+
+  const int * ipNodeMap();
 
   void determinant(
     const int nelem,
@@ -554,12 +569,92 @@ public:
   
 };
 
+// 2D Quad 9 subcontrol volume
+class Quad92DSCV : public MasterElement
+{
+public:
+  Quad92DSCV();
+  ~Quad92DSCV();
+
+  const int * ipNodeMap();
+
+  void determinant(
+    const int nelem,
+    const double *coords,
+    double *areav,
+    double * error );
+
+  void shape_fcn(
+    double *shpfc);
+
+  void shifted_shape_fcn(
+    double *shpfc);
+
+  void general_shape_fcn(
+    const int &npts,
+    const double *par_coord, 
+    double* shape_fcn);
+
+};
+
+// 2D Quad 9 subcontrol surface
+class Quad92DSCS : public MasterElement
+{
+public:
+  Quad92DSCS();
+  ~Quad92DSCS();
+
+  void determinant(
+    const int nelem,
+    const double *coords,
+    double *areav,
+    double * error );
+
+  const int * adjacentNodes();
+
+  void grad_op(
+    const int nelem,
+    const double *coords,
+    double *gradop,
+    double *deriv,
+    double *det_j,
+    double * error );
+
+  void face_grad_op(
+    const int nelem,
+    const int face_ordinal,
+    const double *coords,
+    double *gradop,
+    double *det_j,
+    double * error );
+
+  int opposingNodes(
+    const int ordinal, const int node);
+
+  int opposingFace(
+    const int ordinal, const int node);
+
+  void shape_fcn(
+    double *shpfc);
+
+  void shifted_shape_fcn(
+    double *shpfc);
+
+  void general_shape_fcn(
+    const int &npts,
+    const double *par_coord, 
+    double* shape_fcn);
+
+};
+
 // 2D Tri 3 subcontrol volume
 class Tri2DSCV : public MasterElement
 {
 public:
   Tri2DSCV();
   virtual ~Tri2DSCV();
+
+  const int * ipNodeMap();
 
   void determinant(
     const int nelem,
@@ -649,6 +744,8 @@ public:
   Quad3DSCS();
   virtual ~Quad3DSCS();
 
+  const int * ipNodeMap();
+
   void determinant(
     const int nelem,
     const double *coords,
@@ -699,6 +796,8 @@ public:
   Tri3DSCS();
   virtual ~Tri3DSCS();
 
+  const int * ipNodeMap();
+
   void determinant(
     const int nelem,
     const double *coords,
@@ -724,6 +823,8 @@ class Edge2DSCS : public MasterElement
 public:
   Edge2DSCS();
   virtual ~Edge2DSCS();
+
+  const int * ipNodeMap();
 
   void determinant(
     const int nelem,
@@ -756,6 +857,28 @@ public:
   double parametric_distance(const std::vector<double> &x);
 
   const double elemThickness_;  
+};
+
+// edge 2d
+class Edge32DSCS : public MasterElement
+{
+public:
+  Edge32DSCS();
+  virtual ~Edge32DSCS();
+
+  const int * ipNodeMap();
+
+  void determinant(
+    const int nelem,
+    const double *coords,
+    double *areav,
+    double * error );
+
+  void shape_fcn(
+    double *shpfc);
+
+  void shifted_shape_fcn(
+    double *shpfc);
 };
 
 } // namespace nalu

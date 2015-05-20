@@ -47,6 +47,12 @@ HexSCV::HexSCV()
   nDim_ = 3;
   nodesPerElement_ = 8;
   numIntPoints_ = 8;
+
+  // define ip node mappings
+  ipNodeMap_.resize(8);
+  ipNodeMap_[0] = 0; ipNodeMap_[1] = 1; ipNodeMap_[2] = 2; ipNodeMap_[3] = 3;
+  ipNodeMap_[4] = 4; ipNodeMap_[5] = 5; ipNodeMap_[6] = 6; ipNodeMap_[7] = 7;
+
 }
 
 //--------------------------------------------------------------------------
@@ -55,6 +61,16 @@ HexSCV::HexSCV()
 HexSCV::~HexSCV()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+HexSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -829,6 +845,10 @@ TetSCV::TetSCV()
   nDim_ = 3;
   nodesPerElement_ = 4;
   numIntPoints_ = 4;
+
+  // define ip node mappings
+  ipNodeMap_.resize(4);
+  ipNodeMap_[0] = 0; ipNodeMap_[1] = 1; ipNodeMap_[2] = 2; ipNodeMap_[3] = 3;
 }
 
 //--------------------------------------------------------------------------
@@ -837,6 +857,16 @@ TetSCV::TetSCV()
 TetSCV::~TetSCV()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+TetSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -1150,6 +1180,11 @@ PyrSCV::PyrSCV()
   nDim_ = 3;
   nodesPerElement_ = 5;
   numIntPoints_ = 5; 
+
+  // define ip node mappings
+  ipNodeMap_.resize(5);
+  ipNodeMap_[0] = 0; ipNodeMap_[1] = 1; ipNodeMap_[2] = 2; ipNodeMap_[3] = 3;
+  ipNodeMap_[4] = 4;
 }
 
 //--------------------------------------------------------------------------
@@ -1158,6 +1193,16 @@ PyrSCV::PyrSCV()
 PyrSCV::~PyrSCV()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+PyrSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -1441,6 +1486,11 @@ WedSCV::WedSCV()
   nDim_ = 3;
   nodesPerElement_ = 6;
   numIntPoints_ = 6;
+
+  // define ip node mappings
+  ipNodeMap_.resize(6);
+  ipNodeMap_[0] = 0; ipNodeMap_[1] = 1; ipNodeMap_[2] = 2;
+  ipNodeMap_[3] = 3; ipNodeMap_[4] = 4; ipNodeMap_[5] = 5;
 }
 
 //--------------------------------------------------------------------------
@@ -1449,6 +1499,15 @@ WedSCV::WedSCV()
 WedSCV::~WedSCV()
 {
   // does nothing
+}
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+WedSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -1829,6 +1888,10 @@ Quad2DSCV::Quad2DSCV()
   nDim_ = 2;
   nodesPerElement_ = 4;
   numIntPoints_ = 4;
+
+  // define ip node mappings
+  ipNodeMap_.resize(4);
+  ipNodeMap_[0] = 0; ipNodeMap_[1] = 1; ipNodeMap_[2] = 2; ipNodeMap_[3] = 3;
 }
 
 //--------------------------------------------------------------------------
@@ -1837,6 +1900,16 @@ Quad2DSCV::Quad2DSCV()
 Quad2DSCV::~Quad2DSCV()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Quad2DSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -2365,12 +2438,451 @@ Quad2DSCS::edgeAlignedArea()
 //--------------------------------------------------------------------------
 //-------- constructor -----------------------------------------------------
 //--------------------------------------------------------------------------
+Quad92DSCV::Quad92DSCV()
+  : MasterElement()
+{
+  nDim_ = 2;
+  nodesPerElement_ = 9;
+  numIntPoints_ = 16;
+
+  // define ip node mappings; each sub-element is covered one at a time
+  ipNodeMap_.resize(16);
+  ipNodeMap_[0]  = 0; ipNodeMap_[1]  = 4; ipNodeMap_[2]  = 8; ipNodeMap_[3]  = 7;
+  ipNodeMap_[4]  = 4; ipNodeMap_[5]  = 1; ipNodeMap_[6]  = 5; ipNodeMap_[7]  = 8;
+  ipNodeMap_[8]  = 8; ipNodeMap_[9]  = 5; ipNodeMap_[10] = 2; ipNodeMap_[11] = 6;
+  ipNodeMap_[12] = 7; ipNodeMap_[13] = 8; ipNodeMap_[14] = 6; ipNodeMap_[15] = 3;
+
+  // standard integration location
+  intgLoc_.resize(32);
+  
+  const bool useMidPoint = false;
+  if ( useMidPoint ) {
+    intgLoc_[0]  = -0.75; intgLoc_[1]  = -0.75;
+    intgLoc_[2]  = -0.25; intgLoc_[3]  = -0.75;
+    intgLoc_[4]  = -0.25; intgLoc_[5]  = -0.25;
+    intgLoc_[6]  = -0.75; intgLoc_[7]  = -0.25;
+    intgLoc_[8]  =  0.25; intgLoc_[9]  = -0.75;
+    intgLoc_[10] =  0.75; intgLoc_[11] = -0.75;
+    intgLoc_[12] =  0.75; intgLoc_[13] = -0.25;
+    intgLoc_[14] =  0.25; intgLoc_[15] = -0.25;
+    intgLoc_[16] =  0.25; intgLoc_[17] =  0.25;
+    intgLoc_[18] =  0.75; intgLoc_[19] =  0.25;
+    intgLoc_[20] =  0.75; intgLoc_[21] =  0.75;
+    intgLoc_[22] =  0.25; intgLoc_[23] =  0.75;
+    intgLoc_[24] = -0.75; intgLoc_[25] =  0.25;
+    intgLoc_[26] = -0.25; intgLoc_[27] =  0.25;
+    intgLoc_[28] = -0.25; intgLoc_[29] =  0.75;
+    intgLoc_[30] = -0.75; intgLoc_[31] =  0.75;
+  }
+  else {
+    const double eps = 0.5 - (1.0/std::sqrt(3.0))/2.0;
+    intgLoc_[0]  = -0.75 + eps; intgLoc_[1]  = -0.75 + eps;
+    intgLoc_[2]  = -0.25 - eps; intgLoc_[3]  = -0.75 + eps;
+    intgLoc_[4]  = -0.25 - eps; intgLoc_[5]  = -0.25 - eps;
+    intgLoc_[6]  = -0.75 + eps; intgLoc_[7]  = -0.25 - eps;
+    intgLoc_[8]  =  0.25 + eps; intgLoc_[9]  = -0.75 + eps;
+    intgLoc_[10] =  0.75 - eps; intgLoc_[11] = -0.75 + eps;
+    intgLoc_[12] =  0.75 - eps; intgLoc_[13] =  0.75 - eps;
+    intgLoc_[14] =  0.25 + eps; intgLoc_[15] = -0.25 - eps;
+    intgLoc_[16] =  0.25 + eps; intgLoc_[17] =  0.25 + eps;
+    intgLoc_[18] =  0.75 - eps; intgLoc_[19] =  0.25 + eps;
+    intgLoc_[20] =  0.75 - eps; intgLoc_[21] =  0.75 - eps;
+    intgLoc_[22] =  0.25 + eps; intgLoc_[23] =  0.75 - eps;
+    intgLoc_[24] = -0.75 + eps; intgLoc_[25] =  0.25 + eps;
+    intgLoc_[26] = -0.25 - eps; intgLoc_[27] =  0.25 + eps;
+    intgLoc_[28] = -0.25 - eps; intgLoc_[29] =  0.75 - eps;
+    intgLoc_[30] = -0.75 + eps; intgLoc_[31] =  0.75 - eps;
+  }
+
+  /*
+    std::cout << "SCV ips" << std::endl;
+    for ( int ip = 0; ip < numIntPoints_; ++ip ) {
+    std::cout << "ip: " << ip << " " << intgLoc_[ip*2] << " " << intgLoc_[ip*2+1] << std::endl;
+    }
+  */
+
+  // shifted
+  intgLocShift_.resize(32);
+  intgLocShift_[0]  = -1.00; intgLocShift_[1]  = -1.00;
+  intgLocShift_[2]  =  0.00; intgLocShift_[3]  = -1.00;
+  intgLocShift_[4]  =  0.00; intgLocShift_[5]  =  0.00;
+  intgLocShift_[6]  = -1.00; intgLocShift_[7]  =  0.00;
+  intgLocShift_[8]  =  0.00; intgLocShift_[9]  = -1.00;
+  intgLocShift_[10] =  1.00; intgLocShift_[11] = -1.00;
+  intgLocShift_[12] =  1.00; intgLocShift_[13] =  0.00;
+  intgLocShift_[14] =  0.00; intgLocShift_[15] =  0.00;
+  intgLocShift_[16] =  0.00; intgLocShift_[17] =  0.00;
+  intgLocShift_[18] =  1.00; intgLocShift_[19] =  0.00;
+  intgLocShift_[20] =  1.00; intgLocShift_[21] =  1.00;
+  intgLocShift_[22] =  0.00; intgLocShift_[23] =  1.00;
+  intgLocShift_[24] = -1.00; intgLocShift_[25] =  0.00;
+  intgLocShift_[26] =  0.00; intgLocShift_[27] =  0.00;
+  intgLocShift_[28] =  0.00; intgLocShift_[29] =  1.00;
+  intgLocShift_[30] = -1.00; intgLocShift_[31] =  1.00;
+
+  /*
+  std::cout << "shiftedSCV ips" << std::endl;
+  for ( int ip = 0; ip < numIntPoints_; ++ip ) {
+    std::cout << "ip: " << ip << " " << intgLocShift_[ip*2] << " " << intgLocShift_[ip*2+1] << std::endl;
+  }
+
+  std::cout << "SCV ips" << std::endl;
+  for ( int ip = 0; ip < numIntPoints_; ++ip ) {
+    std::cout << "ip: " << ip << " " << intgLoc_[ip*2] << " " << intgLoc_[ip*2+1] << std::endl;
+  }
+  */
+}
+
+//--------------------------------------------------------------------------
+//-------- destructor ------------------------------------------------------
+//--------------------------------------------------------------------------
+Quad92DSCV::~Quad92DSCV()
+{
+  // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Quad92DSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
+}
+
+//--------------------------------------------------------------------------
+//-------- determinant -----------------------------------------------------
+//--------------------------------------------------------------------------
+void Quad92DSCV::determinant(
+			     const int /*nelem*/,
+			     const double */*coords*/,
+			     double *volume,
+			     double *error)
+{
+  
+  // hack... for uniform mesh
+  const double deltaX = 0.1;
+  const double deltaY = 0.1;
+  const double elemVolume = deltaX*deltaY;
+
+  const double ipVolume = elemVolume/(double)numIntPoints_;
+  for ( int ip = 0; ip < numIntPoints_; ++ip )
+    volume[ip] = ipVolume;
+
+  *error = 0.0;
+}
+
+//--------------------------------------------------------------------------
+//-------- shape_fcn -------------------------------------------------------
+//--------------------------------------------------------------------------
+void
+Quad92DSCV::shape_fcn(double *shpfc)
+{
+  general_shape_fcn(numIntPoints_, &intgLoc_[0], shpfc);
+}
+
+//--------------------------------------------------------------------------
+//-------- shifted_shape_fcn -----------------------------------------------
+//--------------------------------------------------------------------------
+void
+Quad92DSCV::shifted_shape_fcn(double *shpfc)
+{
+  general_shape_fcn(numIntPoints_, &intgLocShift_[0], shpfc);
+}
+
+//--------------------------------------------------------------------------
+//-------- general_shape_fcn -----------------------------------------------
+//--------------------------------------------------------------------------
+void
+Quad92DSCV::general_shape_fcn(
+  const int  &numIntPoints,
+  const double *intgLoc, 
+  double *shpfc)
+{
+  for ( int ip = 0; ip < numIntPoints; ++ip ) {
+    int nineIp = 9*ip; // nodes per element is always 9
+    int k = 2*ip;
+    const double s = intgLoc[k];
+    const double t = intgLoc[k+1];
+    
+    const double one_m_s = 1.0 - s;
+    const double one_p_s = 1.0 + s;
+    const double one_m_t = 1.0 - t;
+    const double one_p_t = 1.0 + t;
+    
+    const double one_m_ss = 1.0 - s * s;
+    const double one_m_tt = 1.0 - t * t;
+    
+    shpfc[nineIp  ] =  0.25 * s * t *  one_m_s *  one_m_t;
+    shpfc[nineIp+1] = -0.25 * s * t *  one_p_s *  one_m_t;
+    shpfc[nineIp+2] =  0.25 * s * t *  one_p_s *  one_p_t; 
+    shpfc[nineIp+3] = -0.25 * s * t *  one_m_s *  one_p_t;
+    shpfc[nineIp+4] = -0.50 *     t *  one_p_s *  one_m_s * one_m_t;
+    shpfc[nineIp+5] =  0.50 * s     *  one_p_t *  one_m_t * one_p_s;
+    shpfc[nineIp+6] =  0.50 *     t *  one_p_s *  one_m_s * one_p_t;
+    shpfc[nineIp+7] = -0.50 * s     *  one_p_t *  one_m_t * one_m_s;
+    shpfc[nineIp+8] =  one_m_ss * one_m_tt;
+  }
+}
+
+//--------------------------------------------------------------------------
+//-------- constructor -----------------------------------------------------
+//--------------------------------------------------------------------------
+Quad92DSCS::Quad92DSCS()
+  : MasterElement()
+{
+  nDim_ = 2;
+  nodesPerElement_ = 9;
+  numIntPoints_ = 24;
+
+  // define L/R mappings
+  lrscv_.resize(48);
+
+  // elem 1
+  lrscv_[0]  = 0; lrscv_[1]  = 4;
+  lrscv_[2]  = 4; lrscv_[3]  = 8;
+  lrscv_[4]  = 7; lrscv_[5]  = 8;
+  lrscv_[6]  = 0; lrscv_[7]  = 7;
+  lrscv_[8]  = 1; lrscv_[9]  = 4;
+  lrscv_[10] = 1; lrscv_[11] = 5;
+  lrscv_[12] = 5; lrscv_[13] = 8;
+  lrscv_[14] = 4; lrscv_[15] = 8;
+  lrscv_[16] = 5; lrscv_[17] = 8;
+  lrscv_[18] = 2; lrscv_[19] = 5;
+  lrscv_[20] = 2; lrscv_[21] = 6;
+  lrscv_[22] = 6; lrscv_[23] = 8;
+  lrscv_[24] = 7; lrscv_[25] = 8;
+  lrscv_[26] = 6; lrscv_[27] = 8;
+  lrscv_[28] = 3; lrscv_[29] = 6;
+  lrscv_[30] = 3; lrscv_[31] = 7;
+  lrscv_[32] = 0; lrscv_[33] = 4;
+  lrscv_[34] = 1; lrscv_[35] = 4;
+  lrscv_[36] = 2; lrscv_[37] = 6;
+  lrscv_[38] = 3; lrscv_[39] = 6;
+  lrscv_[40] = 0; lrscv_[41] = 7;
+  lrscv_[42] = 1; lrscv_[43] = 5;
+  lrscv_[44] = 2; lrscv_[45] = 5;
+  lrscv_[46] = 3; lrscv_[47] = 7;
+  
+  // define opposing node; BAD BAD BAD
+  oppNode_.resize(12);
+
+  // define opposing face; BAD BAD BAD
+  oppFace_.resize(12);
+
+  // standard integration location
+  intgLoc_.resize(48);
+  
+  // define standard ips...
+  const double sqrtThree = std::sqrt(3.0);
+  const double Loc0 = -(3.0*sqrtThree +1.0)/(4.0*sqrtThree);
+  const double Loc1 = -(3.0*sqrtThree -1.0)/(4.0*sqrtThree);
+  const double Loc2 = -1.0/(2.0*sqrtThree);
+  const double Loc3 = 1.0/(2.0*sqrtThree);
+  const double Loc4 = (3.0*sqrtThree -1.0)/(4.0*sqrtThree);
+  const double Loc5 = (3.0*sqrtThree +1.0)/(4.0*sqrtThree);
+  const double faceLocal = 1.0/2.0;
+
+  // elem 1
+  intgLoc_[0]  = -faceLocal; intgLoc_[1]  =  Loc1;
+  intgLoc_[2]  =  Loc2;      intgLoc_[3]  = -faceLocal;
+  intgLoc_[4]  = -faceLocal; intgLoc_[5]  =  Loc2;
+  intgLoc_[6]  =  Loc1;      intgLoc_[7]  = -faceLocal;
+  intgLoc_[8]  =  faceLocal; intgLoc_[9]  =  Loc1;
+  intgLoc_[10] =  Loc4;      intgLoc_[11] = -faceLocal;
+  intgLoc_[12] =  faceLocal; intgLoc_[13] =  Loc2;
+  intgLoc_[14] =  Loc3;      intgLoc_[15] = -faceLocal;
+  intgLoc_[16] =  faceLocal; intgLoc_[17] =  Loc3;
+  intgLoc_[18] =  Loc4;      intgLoc_[19] =  faceLocal;
+  intgLoc_[20] =  faceLocal; intgLoc_[21] =  Loc4;
+  intgLoc_[22] =  Loc3;      intgLoc_[23] =  faceLocal;
+  intgLoc_[24] = -faceLocal; intgLoc_[25] =  Loc3;
+  intgLoc_[26] =  Loc2;      intgLoc_[27] =  faceLocal;
+  intgLoc_[28] = -faceLocal; intgLoc_[29] =  Loc4;
+  intgLoc_[30] =  Loc1;      intgLoc_[31] =  faceLocal;
+  intgLoc_[32] = -faceLocal; intgLoc_[33] =  Loc0;
+  intgLoc_[34] =  faceLocal; intgLoc_[35] =  Loc0;
+  intgLoc_[36] =  faceLocal; intgLoc_[37] =  Loc5;
+  intgLoc_[38] = -faceLocal; intgLoc_[39] =  Loc5;
+  intgLoc_[40] =  Loc0;      intgLoc_[41] = -faceLocal;
+  intgLoc_[42] =  Loc5;      intgLoc_[43] = -faceLocal;
+  intgLoc_[44] =  Loc5;      intgLoc_[45] =  faceLocal;
+  intgLoc_[46] =  Loc0;      intgLoc_[47] =  faceLocal;
+ 
+  // shifted; na
+  intgLocShift_.resize(48);
+  
+  // exposed face; na
+  intgExpFace_.resize(12);
+  
+}
+
+//--------------------------------------------------------------------------
+//-------- destructor ------------------------------------------------------
+//--------------------------------------------------------------------------
+Quad92DSCS::~Quad92DSCS()
+{
+  // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- determinant -----------------------------------------------------
+//--------------------------------------------------------------------------
+void Quad92DSCS::determinant(
+  const int nelem,
+  const double *coords,
+  double *areav,
+  double *error)
+{
+  SIERRA_FORTRAN(quad9_scs_det)
+    ( &nelem, &nodesPerElement_, &numIntPoints_, coords, areav );
+
+  // all is always well; no error checking
+  *error = 0;
+}
+
+//--------------------------------------------------------------------------
+//-------- grad_op ---------------------------------------------------------
+//--------------------------------------------------------------------------
+void Quad92DSCS::grad_op(
+  const int nelem,
+  const double *coords,
+  double *gradop,
+  double *deriv,
+  double *det_j,
+  double *error)
+{
+  int lerr = 0;
+
+  SIERRA_FORTRAN(quad92d_derivative)
+    ( &numIntPoints_, &intgLoc_[0], deriv );
+  
+  SIERRA_FORTRAN(quad_gradient_operator)
+    ( &nelem,
+      &nodesPerElement_,
+      &numIntPoints_,
+      deriv,
+      coords, gradop, det_j, error, &lerr );
+  
+  if ( lerr )
+    std::cout << "sorry, negative area.." << std::endl;
+
+}
+
+//--------------------------------------------------------------------------
+//-------- face_grad_op ----------------------------------------------------
+//--------------------------------------------------------------------------
+void Quad92DSCS::face_grad_op(
+  const int nelem,
+  const int face_ordinal,
+  const double *coords,
+  double *gradop,
+  double *det_j,
+  double *error)
+{
+  std::cout << "Big warning in Quad92DSCV::face_grad_op....." << std::endl;
+}
+
+//--------------------------------------------------------------------------
+//-------- adjacentNodes ---------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Quad92DSCS::adjacentNodes()
+{
+  // define L/R mappings
+  return &lrscv_[0];
+}
+
+//--------------------------------------------------------------------------
+//-------- opposingNodes --------------------------------------------------
+//--------------------------------------------------------------------------
+int
+Quad92DSCS::opposingNodes(
+  const int ordinal,
+  const int node)
+{
+  return oppNode_[ordinal*2+node];
+}
+
+//--------------------------------------------------------------------------
+//-------- opposingFace --------------------------------------------------
+//--------------------------------------------------------------------------
+int
+Quad92DSCS::opposingFace(
+  const int ordinal,
+  const int node)
+{
+  return oppFace_[ordinal*2+node];
+}
+
+//--------------------------------------------------------------------------
+//-------- shape_fcn -------------------------------------------------------
+//--------------------------------------------------------------------------
+void
+Quad92DSCS::shape_fcn(double *shpfc)
+{
+  general_shape_fcn(numIntPoints_, &intgLoc_[0], shpfc);
+}
+
+//--------------------------------------------------------------------------
+//-------- shifted_shape_fcn -----------------------------------------------
+//--------------------------------------------------------------------------
+void
+Quad92DSCS::shifted_shape_fcn(double *shpfc)
+{
+  std::cout << "Qaud92DSCS::shifted_shape_fcn not implemented with intLocShift_" << std::endl;
+  general_shape_fcn(numIntPoints_, &intgLoc_[0], shpfc);
+}
+
+//--------------------------------------------------------------------------
+//-------- general_shape_fcn -----------------------------------------------
+//--------------------------------------------------------------------------
+void
+Quad92DSCS::general_shape_fcn(
+  const int  &numIntPoints,
+  const double *intgLoc, 
+  double *shpfc)
+{
+  for ( int ip = 0; ip < numIntPoints; ++ip ) {
+    int nineIp = 9*ip; // nodes per element is always 9
+    int k = 2*ip;
+    const double s = intgLoc[k];
+    const double t = intgLoc[k+1];
+    
+    const double one_m_s = 1.0 - s;
+    const double one_p_s = 1.0 + s;
+    const double one_m_t = 1.0 - t;
+    const double one_p_t = 1.0 + t;
+    
+    const double one_m_ss = 1.0 - s * s;
+    const double one_m_tt = 1.0 - t * t;
+    
+    shpfc[nineIp  ] =  0.25 * s * t *  one_m_s *  one_m_t;
+    shpfc[nineIp+1] = -0.25 * s * t *  one_p_s *  one_m_t;
+    shpfc[nineIp+2] =  0.25 * s * t *  one_p_s *  one_p_t; 
+    shpfc[nineIp+3] = -0.25 * s * t *  one_m_s *  one_p_t;
+    shpfc[nineIp+4] = -0.50 *     t *  one_p_s *  one_m_s * one_m_t;
+    shpfc[nineIp+5] =  0.50 * s     *  one_p_t *  one_m_t * one_p_s;
+    shpfc[nineIp+6] =  0.50 *     t *  one_p_s *  one_m_s * one_p_t;
+    shpfc[nineIp+7] = -0.50 * s     *  one_p_t *  one_m_t * one_m_s;
+    shpfc[nineIp+8] =  one_m_ss * one_m_tt;
+  }
+}
+
+//--------------------------------------------------------------------------
+//-------- constructor -----------------------------------------------------
+//--------------------------------------------------------------------------
 Tri2DSCV::Tri2DSCV()
   : MasterElement()
 {
   nDim_ = 2;
   nodesPerElement_ = 3;
   numIntPoints_ = 3;
+
+  // define ip node mappings
+  ipNodeMap_.resize(3);
+  ipNodeMap_[0] = 0; ipNodeMap_[1] = 1; ipNodeMap_[2] = 2;
 }
 
 //--------------------------------------------------------------------------
@@ -2379,6 +2891,16 @@ Tri2DSCV::Tri2DSCV()
 Tri2DSCV::~Tri2DSCV()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Tri2DSCV::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -2789,6 +3311,13 @@ Quad3DSCS::Quad3DSCS()
   nodesPerElement_ = 4;
   numIntPoints_ = 4;
 
+  // define ip node mappings
+  ipNodeMap_.resize(4);
+  ipNodeMap_[0] = 0;
+  ipNodeMap_[1] = 1;
+  ipNodeMap_[2] = 2;
+  ipNodeMap_[3] = 3;
+
   // standard integration location
   intgLoc_.resize(8);    
   intgLoc_[0]  = -0.25; intgLoc_[1] = -0.25; // surf 1
@@ -2811,6 +3340,16 @@ Quad3DSCS::Quad3DSCS()
 Quad3DSCS::~Quad3DSCS()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Quad3DSCS::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -3149,6 +3688,12 @@ Tri3DSCS::Tri3DSCS()
   nodesPerElement_ = 3;
   numIntPoints_ = 3;
 
+  // define ip node mappings
+  ipNodeMap_.resize(3);
+  ipNodeMap_[0] = 0;
+  ipNodeMap_[1] = 1;
+  ipNodeMap_[2] = 2;
+
   // standard integration location
   intgLoc_.resize(6);
   const double five24th = 5.0/24.0;
@@ -3170,6 +3715,16 @@ Tri3DSCS::Tri3DSCS()
 Tri3DSCS::~Tri3DSCS()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Tri3DSCS::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -3242,6 +3797,11 @@ Edge2DSCS::Edge2DSCS()
   nodesPerElement_ = 2;
   numIntPoints_ = 2;
 
+  // define ip node mappings
+  ipNodeMap_.resize(2);
+  ipNodeMap_[0] = 0;
+  ipNodeMap_[1] = 1;
+
   intgLoc_.resize(2);
   intgLoc_[0]  =  -0.25; intgLoc_[1]  = 0.25;
  
@@ -3256,6 +3816,16 @@ Edge2DSCS::Edge2DSCS()
 Edge2DSCS::~Edge2DSCS()
 {
   // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Edge2DSCS::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
 }
 
 //--------------------------------------------------------------------------
@@ -3394,6 +3964,109 @@ Edge2DSCS::general_shape_fcn(
     shpfc[j+1] = 0.5*(1.0+isoParCoord[ip]);
   }
 
+}
+
+
+//--------------------------------------------------------------------------
+//-------- constructor -----------------------------------------------------
+//--------------------------------------------------------------------------
+Edge32DSCS::Edge32DSCS()
+  : MasterElement()
+{
+  nDim_ = 2;
+  nodesPerElement_ = 3;
+  numIntPoints_ = 6;
+
+  // define ip node mappings
+  ipNodeMap_.resize(6);
+  ipNodeMap_[0]  = 0;
+  ipNodeMap_[1]  = 0;
+  ipNodeMap_[2]  = 2;
+  ipNodeMap_[3]  = 2;
+  ipNodeMap_[4]  = 1;
+  ipNodeMap_[5]  = 1;
+
+  intgLoc_.resize(6);
+  const double sqrtThree = std::sqrt(3.0);
+  intgLoc_[0]  = -(3.0*sqrtThree +1.0)/(4.0*sqrtThree); intgLoc_[1]  = -(3.0*sqrtThree -1.0)/(4.0*sqrtThree); 
+  intgLoc_[2]  = -1.0/(2.0*sqrtThree);                  intgLoc_[3]  =  1.0/(2.0*sqrtThree); 
+  intgLoc_[4]  =  (3.0*sqrtThree -1.0)/(4.0*sqrtThree); intgLoc_[5]  =  (3.0*sqrtThree +1.0)/(4.0*sqrtThree);
+
+  for ( int ip = 0; ip < numIntPoints_; ++ip ) 
+    std::cout << "Edge32dSCS Ip: " << ip << " " << intgLoc_[ip] << std::endl;
+  
+  intgLocShift_.resize(6);
+  intgLocShift_[0] = -1.00; intgLocShift_[1]  = -1.00; 
+  intgLocShift_[2] =  0.00; intgLocShift_[3]  =  0.00; 
+  intgLocShift_[4] =  1.00; intgLocShift_[5]  =  1.00; 
+}
+
+//--------------------------------------------------------------------------
+//-------- destructor ------------------------------------------------------
+//--------------------------------------------------------------------------
+Edge32DSCS::~Edge32DSCS()
+{
+  // does nothing
+}
+
+//--------------------------------------------------------------------------
+//-------- ipNodeMap -------------------------------------------------------
+//--------------------------------------------------------------------------
+const int *
+Edge32DSCS::ipNodeMap()
+{
+  // define scv->node mappings
+  return &ipNodeMap_[0];
+}
+
+//--------------------------------------------------------------------------
+//-------- determinant -----------------------------------------------------
+//--------------------------------------------------------------------------
+void Edge32DSCS::determinant(
+  const int nelem,
+  const double *coords,
+  double *areav,
+  double *error)
+{
+  int lerr = 0;
+
+  SIERRA_FORTRAN(edge32d_scs_det)
+    ( &nelem, &nodesPerElement_, &numIntPoints_,
+      coords, areav );
+
+  // check
+  *error = (lerr == 0) ? 0.0 : 1.0;
+
+}
+
+//--------------------------------------------------------------------------
+//-------- shape_fcn -------------------------------------------------------
+//--------------------------------------------------------------------------
+void
+Edge32DSCS::shape_fcn(double *shpfc)
+{
+  for ( int i =0; i< numIntPoints_; ++i ) {
+    int j = 3*i;
+    const double s = intgLoc_[i];
+    shpfc[j  ] = -s*(1.0-s)*0.5;
+    shpfc[j+1] = s*(1.0+s)*0.5;
+    shpfc[j+2] = (1.0-s)*(1.0+s);
+  }
+}
+
+//--------------------------------------------------------------------------
+//-------- shifted_shape_fcn -----------------------------------------------
+//--------------------------------------------------------------------------
+void
+Edge32DSCS::shifted_shape_fcn(double *shpfc)
+{
+  for ( int i =0; i< numIntPoints_; ++i ) {
+    int j = 3*i;
+    const double s = intgLocShift_[i];
+    shpfc[j  ] = -s*(1.0-s)*0.5;
+    shpfc[j+1] = s*(1.0+s)*0.5;
+    shpfc[j+2] = (1.0-s)*(1.0+s);
+  }
 }
 
 } // namespace nalu

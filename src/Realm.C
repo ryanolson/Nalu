@@ -2458,7 +2458,8 @@ Realm::register_wall_bc(
   const int nDim = metaData_->spatial_dimension();
 
   // register fields
-  const int numScsIp = theTopo.num_nodes();
+  MasterElement *meFC = get_surface_master_element(theTopo);
+  const int numScsIp = meFC->numIntPoints_;
 
   GenericFieldType *exposedAreaVec_
     = &(metaData_->declare_field<GenericFieldType>(static_cast<stk::topology::rank_t>(metaData_->side_rank()), "exposed_area_vector"));
@@ -2500,7 +2501,8 @@ Realm::register_inflow_bc(
   const int nDim = metaData_->spatial_dimension();
 
   // register fields
-  const int numScsIp = theTopo.num_nodes();
+  MasterElement *meFC = get_surface_master_element(theTopo);
+  const int numScsIp = meFC->numIntPoints_;
 
   GenericFieldType *exposedAreaVec_
     = &(metaData_->declare_field<GenericFieldType>(static_cast<stk::topology::rank_t>(metaData_->side_rank()), "exposed_area_vector"));
@@ -2541,7 +2543,8 @@ Realm::register_open_bc(
   const int nDim = metaData_->spatial_dimension();
 
   // register fields
-  const int numScsIp = theTopo.num_nodes();
+  MasterElement *meFC = get_surface_master_element(theTopo);
+  const int numScsIp = meFC->numIntPoints_;
 
   GenericFieldType *exposedAreaVec_
     = &(metaData_->declare_field<GenericFieldType>(static_cast<stk::topology::rank_t>(metaData_->side_rank()), "exposed_area_vector"));
@@ -2588,7 +2591,10 @@ Realm::register_contact_bc(
   //====================================================
 
   const int nDim = metaData_->spatial_dimension();
-  const int numScsIp = theTopo.num_nodes();
+
+  // register fields
+  MasterElement *meFC = get_surface_master_element(theTopo);
+  const int numScsIp = meFC->numIntPoints_;
 
   // exposed area vector
   GenericFieldType *exposedAreaVec_
@@ -2728,7 +2734,8 @@ Realm::register_symmetry_bc(
   const int nDim = metaData_->spatial_dimension();
 
   // register fields
-  const int numScsIp = theTopo.num_nodes();
+  MasterElement *meFC = get_surface_master_element(theTopo);
+  const int numScsIp = meFC->numIntPoints_;
 
   GenericFieldType *exposedAreaVec_
     = &(metaData_->declare_field<GenericFieldType>(static_cast<stk::topology::rank_t>(metaData_->side_rank()), "exposed_area_vector"));
@@ -2831,14 +2838,14 @@ Realm::register_non_conformal_bc(
 
   const int nDim = metaData_->spatial_dimension();
   
-  // size of ip variables
+  // register fields
   MasterElement *meFC = get_surface_master_element(theTopo);
-  const int numBip = meFC->numIntPoints_;
+  const int numScsIp = meFC->numIntPoints_;
   
   // exposed area vector
   GenericFieldType *exposedAreaVec_
     = &(metaData_->declare_field<GenericFieldType>(static_cast<stk::topology::rank_t>(metaData_->side_rank()), "exposed_area_vector"));
-  stk::mesh::put_field(*exposedAreaVec_, *part, nDim*numBip );
+  stk::mesh::put_field(*exposedAreaVec_, *part, nDim*numScsIp );
    
   //====================================================
   // Register non-conformal algorithms
@@ -3360,6 +3367,10 @@ Realm::get_volume_master_element(
         theElem = new Quad2DSCV();
         break;
 
+      case stk::topology::QUAD_9_2D:
+        theElem = new Quad92DSCV();
+        break;
+
       case stk::topology::TRI_3_2D:
         theElem = new Tri2DSCV();
         break;
@@ -3424,12 +3435,20 @@ Realm::get_surface_master_element(
         theElem =  new Quad2DSCS();
         break;
 
+      case stk::topology::QUAD_9_2D:
+        theElem =  new Quad92DSCS();
+        break;
+
       case stk::topology::TRI_3_2D:
         theElem = new Tri2DSCS();
         break;
 
       case stk::topology::LINE_2:
         theElem = new Edge2DSCS();
+        break;
+
+      case stk::topology::LINE_3:
+        theElem = new Edge32DSCS();
         break;
 
       default:

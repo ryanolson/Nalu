@@ -113,6 +113,13 @@ SIERRA_FORTRAN( quad_scv_det ) ( const int*  nelem,
                                 int *nerr);
 
 extern "C" void
+SIERRA_FORTRAN( quad9_scs_det ) ( const int*  nelem,
+				  const int*  npe,
+				  const int*  nscs,
+				  const double* coords,
+				  double* area_vec);
+
+extern "C" void
 SIERRA_FORTRAN( quad3d_scs_det ) ( const int*  nelem,
                                    const double* coords,
                                    double* areav );
@@ -132,6 +139,13 @@ SIERRA_FORTRAN( edge2d_scs_det ) ( const int*  nelem,
                                   double* areav );
 
 extern "C" void
+SIERRA_FORTRAN( edge32d_scs_det ) ( const int*  nelem,
+				    const int*  npe,
+				    const int*  nint,
+				    const double* coords,
+				    double* areav );
+
+extern "C" void
 SIERRA_FORTRAN( hex_shape_fcn ) ( const int*  npts,
                                   const double* par_coords,
                                   double* shape_fcn );
@@ -144,6 +158,12 @@ extern "C" void
 SIERRA_FORTRAN( quad_derivative ) ( const int*  npts,
 				    const double* par_coords,
 				    double* deriv );
+
+extern "C" void
+SIERRA_FORTRAN( quad92d_derivative ) ( const int*  npts,
+				       const double* par_coords,
+				       double* deriv );
+
 extern "C" void
 SIERRA_FORTRAN( tet_derivative ) ( const int*  npts,
                                    double* deriv );
@@ -222,6 +242,5 @@ extern "C" void
 SIERRA_FORTRAN( quad3d_shape_fcn ) ( const int*  npts,
                                      const double* par_coords,
                                      double* shape_fcn );
-
 
 #endif // FORTRAN_Proto_h
