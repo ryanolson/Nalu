@@ -1,0 +1,28 @@
+# buildr blueprint for nalu
+
+modules:
+  - load:
+    - PrgEnv-gnu
+    - gcc/4.9
+    - cray-hdf5-parallel
+    - cray-netcdf-hdf5parallel
+
+environment:
+  - setenv:
+    - NALU_ROOT: ${PWD}
+    - NALU_BUILD_DIR: ${NALU_ROOT}/build
+    - CRAYPE_LINK_TYPE: dynamic
+  - prepend_path:
+    - PATH: ${NALU_BUILD_DIR}/install/bin
+    - PATH: ${NALU_BUILD_DIR}/install/trilinos/bin
+
+
+script:
+  - cd $BUILDR_SANDBOX
+  - $NALU_ROOT/cray/scripts/cmake.sh
+  - $NALU_ROOT/cray/scripts/superlu.sh
+  - $NALU_ROOT/cray/scripts/libxml2.sh
+  - $NALU_ROOT/cray/scripts/boost.sh
+  - $NALU_ROOT/cray/scripts/yaml-cpp.sh
+  - $NALU_ROOT/cray/scripts/zlib.sh
+  
