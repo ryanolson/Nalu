@@ -17,6 +17,6 @@ tar -xzf $pkg.tar.gz
 
 # Build libxml2
 cd $pkg
-CC=cc CXX=CC ./configure --prefix=$NALU_BUILD_DIR/install
+CC=cc CXX=CC ./configure --prefix=$NALU_BUILD_DIR/install --disable-shared --without-python
 make
 make -k install

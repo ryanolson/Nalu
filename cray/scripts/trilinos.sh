@@ -7,13 +7,12 @@ pkg=publicTrilinos
 mkdir -p $NALU_BUILD_DIR/packages
 cd $NALU_BUILD_DIR/packages
 
-#if [ -d $pkg ]; then
-#    rm -rf $pkg
-#fi
+if [ -d $pkg ]; then
+    rm -rf $pkg
+fi
 
 # Download and expand Trilinos to packages
-#git clone https://software.sandia.gov/trilinos/repositories/publicTrilinos
-#git checkout trilinos-release-12-0-branch
+git clone https://forge.us.cray.com/Applications/Trilinos $pkg
 
 # Build Trilinos
 cd $pkg

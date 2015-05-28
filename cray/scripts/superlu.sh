@@ -19,7 +19,8 @@ tar -xzf superlu_4.3.tar.gz
 
 # Build SuperLU
 cd $pkgdir
+mkdir -p install/SuperLU_4.3/lib
+mkdir -p install/SuperLU_4.3/include
 cp $NALU_ROOT/cray/patches/make.superlu.cray make.inc
-./configure --prefix=$NALU_BUILD_DIR/install
 make
-cp SRC/*.h $NALU_BUILD_DIR/install/include
+cp SRC/*.h $NALU_BUILD_DIR/install/SuperLU_4.3/include

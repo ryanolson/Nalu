@@ -20,6 +20,6 @@ mv yaml-cpp $pkg
 cd $pkg
 mkdir build
 cd build
-cmake -DCMAKE_CC_COMPILER=cc -DCMAKE_CC_COMPILER=CC -DCMAKE_INSTALL_PREFIX=$NALU_BUILD_DIR/install ..
+cmake -DCMAKE_C_COMPILER=cc -DCMAKE_CXX_COMPILER=CC -DCMAKE_INSTALL_PREFIX=$NALU_BUILD_DIR/install ..
 make
 make install

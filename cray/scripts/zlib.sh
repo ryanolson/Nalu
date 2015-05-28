@@ -17,6 +17,6 @@ tar -xzf $pkg.tar.gz
 
 # Build zlib
 cd $pkg
-CC=gcc CXX=g++ CFLAGS=-O3 CXXFLAGES=-O3 ./configure --prefix=$NALU_BUILD_DIR/install/
+CC=cc CXX=CC CFLAGS="-O3 -ip -fp-model precise -fp-model source -restrict" CXXFLAGS="-O3 -ip -fp-model precise -fp-model source -restrict" ./configure --prefix=$NALU_BUILD_DIR/install/
 make
 make install

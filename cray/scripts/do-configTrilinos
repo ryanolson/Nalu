@@ -40,9 +40,20 @@ rm -f CMakeCache.txt
 
 
 cmake \
--DCMAKE_C_COMPILER=`which cc` \
--DCMAKE_CXX_COMPILER=`which CC` \
--DCMAKE_FORTRAN_COMPILER=`which ftn` \
+-D CMAKE_C_COMPILER=`which cc` \
+-D CMAKE_CXX_COMPILER=`which CC` \
+-D CMAKE_FORTRAN_COMPILER=`which ftn` \
+-D CMAKE_C_FLAGS:STRING="-ip -fp-model precise -fp-model source -restrict" \
+-D CMAKE_CXX_FLAGS:STRING="-ip -fp-model precise -fp-model source -restrict -DMPICH_SKIP_MPICXX" \
+-D CMAKE_Fortran_FLAGS:STRING="-ip -fp-model source" \
+-D CMAKE_BUILD_TYPE:STRING=RELEASE \
+-D CMAKE_C_FLAGS_RELEASE_OVERRIDE:STRING=-O2 \
+-D CMAKE_CXX_FLAGS_RELEASE_OVERRIDE:STRING=-O2 \
+-D CMAKE_Fortran_FLAGS_RELEASE_OVERRIDE:STRING=-O2 \
+-D BUILD_SHARED_LIBS:BOOL=OFF \
+-D MPI_USE_COMPILER_WRAPPERS:BOOL=ON \
+-D MPI_EXEC=aprun \
+-D MPI_EXEC_NUMPROCS_FLAG=-n \
 -DBLAS_LIBRARY_NAMES="" \
 -DLAPACK_LIBRARY_NAMES="" \
 -DCMAKE_INSTALL_PREFIX=$trilinos_install_dir \

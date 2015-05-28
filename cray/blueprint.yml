@@ -2,8 +2,9 @@
 
 modules:
   - load:
-    - PrgEnv-gnu
-    - gcc/4.9
+    - PrgEnv-intel
+    - gcc/4.9.2
+    - craype-haswell
     - cray-hdf5-parallel
     - cray-netcdf-hdf5parallel
 
